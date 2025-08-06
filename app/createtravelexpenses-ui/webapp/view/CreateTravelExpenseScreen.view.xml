@@ -1,0 +1,182 @@
+<mvc:View controllerName="createtravelexpenses.createtravelexpensesui.controller.CreateTravelExpenseScreen"
+  xmlns:mvc="sap.ui.core.mvc"
+  xmlns="sap.m"
+  xmlns:core="sap.ui.core"
+  xmlns:layout="sap.ui.layout.form" displayBlock="true">
+  <Page title="Review Travel Request">
+    <content>
+      <VBox class="sapUiSmallMarginTop sapUiMediumMarginBegin sapUiMediumMarginEnd sapUiMediumMarginBottom" width="100%" renderType="Bare">
+        <HBox >
+          <Title text="Employee ID: " level="H2" class="sapUiSmallMarginBottom" />
+          <Title text="{travelData>/employee}" level="H2" class="sapUiSmallMarginBegin" />
+        </HBox>
+
+
+
+        <HBox width="95%">
+
+          <HBox width="50%">
+
+            <!-- General Data Section -->
+            <VBox width="45%">
+              <VBox>
+                <Title text="Genaral Information" level="H2" class="sapUiSmallMarginTop"/>
+                <HBox class="sapUiSmallMarginTop">
+                  <Label text="Start Date:" />
+                  <Text id="id_startDate" text="{travelData>/startDate}" class="sapUiSmallMarginBegin" />
+                </HBox >
+                <HBox class="sapUiSmallMarginTop">
+                  <Label text="End Date:"/>
+                  <Text id="id_endDate" text="{travelData>/endDate}" class="sapUiSmallMarginBegin"/>
+                </HBox >
+                <HBox class="sapUiSmallMarginTop">
+                  <Label text="Departure:" />
+                  <Text id="id_departure" text="{travelData>/departure}" class="sapUiSmallMarginBegin"/>
+                </HBox >
+                <HBox class="sapUiSmallMarginTop">
+                  <Label text="Arrival:" />
+                  <Text id="id_arrival" text="{travelData>/arrival}" class="sapUiSmallMarginBegin"/>
+                </HBox >
+
+              </VBox>
+            </VBox>
+
+            <!-- General Data Section -->
+            <VBox width="45%">
+              <VBox>
+                <Title text=" " level="H2" class="sapUiSmallMarginTop"/>
+                <HBox class="sapUiSmallMarginTop">
+                  <Label text="Place of Visit:" />
+                  <Text id="id_placeOfVisit" text="{travelData>/placeOfVisit}" class="sapUiSmallMarginBegin"/>
+                </HBox >
+                <HBox class="sapUiSmallMarginTop">
+                  <Label text="Posting Date:" />
+                  <Text id="id_postingDate" text="{travelData>/postingDate}" class="sapUiSmallMarginBegin"/>
+                </HBox >
+                <HBox class="sapUiSmallMarginTop">
+                  <Label text="Self Travel:"/>
+                  <Text id="id_selfTravel" text="{travelData>/selfTravel}" class="sapUiSmallMarginBegin"/>
+                </HBox >
+
+              </VBox>
+            </VBox>
+            <VBox xmlns="sap.m"
+              xmlns:core="sap.ui.core" alignItems="Center" justifyContent="Center" height="100%" class="sapUiMarginMarginEnd">
+              <core:HTML content="&lt;div style='width:1px; height:100px; background-color:#ccc; margin: 0 1rem;'&gt;&lt;/div&gt;" />
+            </VBox>
+
+          </HBox>
+
+          <!-- Additional Information Section -->
+          <HBox width="50%">
+            <VBox width="50%">
+              <VBox>
+                <Title text="Additional Information" level="H2" class="sapUiSmallMarginTop"/>
+                <HBox class="sapUiSmallMarginTop">
+                  <Label text="Travel Type:" />
+                  <Text id="id_travelType" text="{travelData>/travelType}" class="sapUiSmallMarginBegin"/>
+                </HBox >
+                <HBox class="sapUiSmallMarginTop">
+                  <Label text="Purpose of Travel:" />
+                  <Text id="id_purposeOfTravel" text="{travelData>/purposeOfTravel}" class="sapUiSmallMarginBegin"/>
+                </HBox >
+
+              </VBox>
+
+            </VBox>
+
+            <!-- Additional Information Section -->
+            <VBox width="50%">
+              <VBox>
+                <Title text="" level="H2" class="sapUiSmallMarginTop"/>
+
+                <HBox class="sapUiSmallMarginTop">
+                  <Label text="Estimated Costs:" />
+                  <Text id="id_estimatedCost" text="{travelData>/estimatedCost} INR" class="sapUiSmallMarginBegin"/>
+                </HBox >
+                <HBox class="sapUiSmallMarginTop">
+
+                  <Label text="Additional Travellers:" />
+                  <Text id="id_additionalTravellers" text="{travelData>/additionalTravellers}" class="sapUiSmallMarginBegin"/>
+                </HBox >
+                <HBox class="sapUiSmallMarginTop">
+                  <Label text="Advance (International Trip):" />
+                  <Text id="id_advance" text="{travelData>/advance} Indian Rupee" class="sapUiSmallMarginBegin"/>
+                </HBox >
+              </VBox>
+
+            </VBox>
+          </HBox>
+        </HBox>
+
+        <VBox xmlns="sap.m"
+          xmlns:core="sap.ui.core">
+          <core:HTML content="&lt;hr style='border: 1px solid #ccc; width: 100%; margin: 1rem 0;' /&gt;" />
+        </VBox>
+
+
+
+
+        <HBox class="sapUiSmallMarginTop">
+          <Button text="Previous Step" press="onPreviousStep" class="sapUiSmallMarginEnd"/>
+          <Button text="Enter Receipts" press="onEnterReceipts" />
+        </HBox>
+
+
+        <VBox class="whiteRoundedBox sapUiSmallMarginTop" width="95%" id="idReceiptEntry" visible="false">
+
+          <VBox>
+            <Toolbar class = "sapUiMediumMarginBottom">
+              <Button text="New Entry" press="onAddNewExpense" />
+               <Button text="Delete" press="onDeleteSelectedExpenses" type="Reject" />
+            </Toolbar>
+
+            <Table id="expenseTable" items="{expenseModel>/expenses}" mode="MultiSelect">
+
+              <columns>
+                <Column>
+                  <Text text="Expense Type" />
+                </Column>
+                <Column>
+                  <Text text="Receipt Amount" />
+                </Column>
+                <Column>
+                  <Text text="Receipt Date" />
+                </Column>
+              </columns>
+
+              <items>
+                <ColumnListItem>
+                  <cells>
+                    <!-- Expense Type ComboBox -->
+                    <ComboBox selectedKey="{expenseModel>expenseType}" items="{
+                path: 'expenseModel>/expenseTypes'
+              }" placeholder="Select Type">
+                      <core:Item key="{expenseModel>key}" text="{expenseModel>text}" />
+                    </ComboBox>
+
+                    <!-- Receipt Amount -->
+                    <Input value="{expenseModel>receiptAmount}" type="Number" />
+
+                    <!-- Receipt Date -->
+                    <DatePicker value="{expenseModel>receiptDate}" displayFormat="dd.MM.yyyy" valueFormat="yyyy-MM-dd" />
+                  </cells>
+                </ColumnListItem>
+              </items>
+            </Table>
+          </VBox>
+
+          
+        <HBox justifyContent="End" class="sapUiSmallMarginTop">
+          <Button text="Review" press="onReviewTravelRequest" class="sapUiSmallMarginEnd"/>
+          <Button text="Save Draft" press="onSaveDraft"/>
+        </HBox>
+
+        </VBox>
+
+      </VBox>
+    </content>
+  </Page>
+</mvc:View>
+
+
