@@ -37,7 +37,7 @@ sap.ui.define([
          this.sAction = oActionModel.getProperty("/actionTaken");
         
         console.log("actionTaken "+ this.sAction);
- const saveAndProceedButton = this.byId("Rev_saveAndProceed");
+         const saveAndProceedButton = this.byId("Rev_saveAndProceed");
         if(this.sAction == "save"){
           this.byId("Rev_id_saveDraftRadio").setEnabled(false);
           this.byId("Rev_id_saveAndApproveRadio").setEnabled(false);
@@ -48,6 +48,7 @@ sap.ui.define([
           this.byId("Rev_id_ApproveRadio").setSelected(true);
 
           saveAndProceedButton.setText("Send for Approval");
+          this.selectedOption = "draft";
         } else{
           this.byId("Rev_id_saveDraftRadio").setEnabled(true);
           this.byId("Rev_id_saveAndApproveRadio").setEnabled(true);
@@ -58,6 +59,7 @@ sap.ui.define([
           this.byId("Rev_id_ApproveRadio").setSelected(false);
 
           saveAndProceedButton.setText("Save and Send for Approval");
+          this.selectedOption = "SaveApprove";
         }
       },
 
@@ -152,10 +154,41 @@ sap.ui.define([
                     sap.m.MessageToast.show("Travel Expenses saved successfully.");
                     // Clear the expenses after successful submission
                    // oModel.setProperty("/expenses", []);
-                   
                       console.log("count of Expenses stored "+count);
                       if (count == aExpenses.length){
+                          const oModelTravel = this.getOwnerComponent().getModel("travelData");
+                          console.log(oModelTravel);
+                           //start workflow (Build process)
+                            const travelDataObj = {
+                              travelRequest: {
+                                      TravelRequestId: oModelTravel.ID,
+                                      TravelStartDate:  oModelTravel.startDate,
+                                      TravelEndDate: oModelTravel.endDate,
+                                      TravelDeparture: oModelTravel.departure,
+                                      TravelArrival:  oModelTravel.arrival,
+                                      TravelPlaceOfVisit:  oModelTravel.placeOfVisit
+                                  },
+                                  travelExpenses: aExpenses.map(exp => ({
+                                      expenseType: exp.expenseType || "",
+                                      receiptAmount: exp.receiptAmount || "",
+                                      receiptDate: exp.receiptDate || ""
+                                  }))
+                            };
                           
+                            $.ajax({
+                              url: "/odata/v4/travel/startTravelWorkflow",
+                              method: "POST",
+                              contentType: "application/json",
+                              data: JSON.stringify({ travelData: JSON.stringify(travelDataObj) }),
+                              success: function (response) {
+                                sap.m.MessageToast.show("Travel request " + this.travelId + " is send for approval.");
+                              },
+                              error: function (xhr, status, error) {
+                                sap.m.MessageBox.error("Failed to start workflow: " + xhr.responseText);
+                              }
+                            });
+
+
                       }
 
                 }).catch((oError) => {
