@@ -156,8 +156,10 @@ sap.ui.define(["sap/ui/core/mvc/Controller"], (Controller) => {
                     oModelOData.submitBatch("travelExpensesGroup").then(() => {
                         sap.m.MessageToast.show("Travel Expenses saved successfully.");
                         // Clear the expenses after successful submission
-                        oModel.setProperty("/expenses", []);
-
+                       // oModel.setProperty("/expenses", []);
+                            this.getOwnerComponent().getRouter().navTo("ReviewTravelExpensesScreen", {
+                            travelId: this.travelId
+                        });
                     }).catch((oError) => {
                         sap.m.MessageBox.error("Error saving travel request: " + oError.message);
                     }).finally(() => {

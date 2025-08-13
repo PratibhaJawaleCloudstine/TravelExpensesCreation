@@ -36,23 +36,35 @@ sap.ui.define([
         const oActionModel = this.getOwnerComponent().getModel("actionModel");
          this.sAction = oActionModel.getProperty("/actionTaken");
         
-        console.log("actionTaken "+ sAction);
-
-        if(sAction == "save"){
+        console.log("actionTaken "+ this.sAction);
+ const saveAndProceedButton = this.byId("Rev_saveAndProceed");
+        if(this.sAction == "save"){
           this.byId("Rev_id_saveDraftRadio").setEnabled(false);
           this.byId("Rev_id_saveAndApproveRadio").setEnabled(false);
           this.byId("Rev_id_ApproveRadio").setEnabled(true);
+
+          this.byId("Rev_id_saveDraftRadio").setSelected(false);
+          this.byId("Rev_id_saveAndApproveRadio").setSelected(false);
+          this.byId("Rev_id_ApproveRadio").setSelected(true);
+
+          saveAndProceedButton.setText("Send for Approval");
         } else{
           this.byId("Rev_id_saveDraftRadio").setEnabled(true);
           this.byId("Rev_id_saveAndApproveRadio").setEnabled(true);
           this.byId("Rev_id_ApproveRadio").setEnabled(false);
+
+          this.byId("Rev_id_saveDraftRadio").setSelected(false);
+          this.byId("Rev_id_saveAndApproveRadio").setSelected(true);
+          this.byId("Rev_id_ApproveRadio").setSelected(false);
+
+          saveAndProceedButton.setText("Save and Send for Approval");
         }
       },
 
       onActionSelect: function (oEvent) {
         const selectedIndex = oEvent.getParameter("selectedIndex");
   
-        const saveAndProceedButton = this.byId("saveAndProceed");
+        const saveAndProceedButton = this.byId("Rev_saveAndProceed");
   
         if (selectedIndex === 0) {
           saveAndProceedButton.setText("Save Draft");
@@ -113,9 +125,49 @@ sap.ui.define([
                 });
 
             });
-          } else if(this.sAction=="SaveApprove"){
+          } else if(this.selectedOption=="SaveApprove"){
+              var count = 0;
+             aExpenses.forEach((item) => {
 
-          } else if(this.sAction=="Approve"){
+                var oModelOData = this.getOwnerComponent().getModel(); // OData V4 model
+                // Step 1: Create binding to the entity set (TravelRequests)
+                var oListBinding = oModelOData.bindList("/TravelExpenses", undefined, undefined, undefined, {
+                    $$updateGroupId: "travelExpensesGroup"
+                });
+
+
+                // Step 2: Create entry (this returns a context)
+                oListBinding.create({
+                    travelRequest_ID: this.travelId,
+                    expenseType: item.expenseType,
+                    receiptAmount: item.receiptAmount,
+                    receiptDate: item.receiptDate,
+                    currency: "INR"
+                });
+
+                count = count + 1;
+
+                // Step 3: Submit the batch
+                oModelOData.submitBatch("travelExpensesGroup").then(() => {
+                    sap.m.MessageToast.show("Travel Expenses saved successfully.");
+                    // Clear the expenses after successful submission
+                   // oModel.setProperty("/expenses", []);
+                   
+                      console.log("count of Expenses stored "+count);
+                      if (count == aExpenses.length){
+                          
+                      }
+
+                }).catch((oError) => {
+                    sap.m.MessageBox.error("Error saving travel request: " + oError.message);
+                }).finally(() => {
+                    // Hide loader
+                    this.getView().setBusy(false);
+                });
+
+            });
+
+          } else if(this.selectedOption=="Approve"){
             
           }
 
