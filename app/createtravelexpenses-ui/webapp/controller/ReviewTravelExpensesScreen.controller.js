@@ -157,16 +157,22 @@ sap.ui.define([
                       console.log("count of Expenses stored "+count);
                       if (count == aExpenses.length){
                           const oModelTravel = this.getOwnerComponent().getModel("travelData");
+                          console.log("oModelTravel");
                           console.log(oModelTravel);
+                          const oData = oModelTravel.getData();
+                          console.log("oData");
+                          console.log(oData);
+
+
                            //start workflow (Build process)
                             const travelDataObj = {
                               travelRequest: {
-                                      TravelRequestId: oModelTravel.ID,
-                                      TravelStartDate:  oModelTravel.startDate,
-                                      TravelEndDate: oModelTravel.endDate,
-                                      TravelDeparture: oModelTravel.departure,
-                                      TravelArrival:  oModelTravel.arrival,
-                                      TravelPlaceOfVisit:  oModelTravel.placeOfVisit
+                                      TravelRequestId: oData.ID,
+                                      TravelStartDate:  oData.startDate,
+                                      TravelEndDate: oData.endDate,
+                                      TravelDeparture: oData.departure,
+                                      TravelArrival:  oData.arrival,
+                                      TravelPlaceOfVisit:  oData.placeOfVisit
                                   },
                                   travelExpenses: aExpenses.map(exp => ({
                                       expenseType: exp.expenseType || "",
@@ -174,6 +180,7 @@ sap.ui.define([
                                       receiptDate: exp.receiptDate || ""
                                   }))
                             };
+                          
                           
                             $.ajax({
                               url: "/odata/v4/travel/startTravelWorkflow",

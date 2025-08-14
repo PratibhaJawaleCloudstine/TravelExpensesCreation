@@ -8,12 +8,12 @@ sap.ui.define(["sap/ui/core/mvc/Controller"], (Controller) => {
             const oData = {
                 expenses: [],
                 expenseTypes: [
-                    { key: "MEALS", text: "Meals/Snacks" },
-                    { key: "AIR", text: "Air Travel" },
-                    { key: "LAUNDRY", text: "Laundry" },
-                    { key: "RAIL", text: "Rail Travel" },
-                    { key: "ROAD", text: "Road Travel" },
-                    { key: "ALCOHOL", text: "Alcohol" }
+                    { key: "Meals/Snacks", text: "Meals/Snacks" },
+                    { key: "Air Travel", text: "Air Travel" },
+                    { key: "Laundry", text: "Laundry" },
+                    { key: "Rail Travel", text: "Rail Travel" },
+                    { key: "Road Travel", text: "Road Travel" },
+                    { key: "Alcohol", text: "Alcohol" }
                 ]
             };
 
