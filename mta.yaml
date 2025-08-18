@@ -132,7 +132,7 @@ resources:
       service-name: CreateTravelExpenses-destination-service
       service-plan: lite
     requires:
-      - name: TravelExpenses-auth
+      - name: CreateTravelExpenses-auth
 parameters:
   deploy_mode: html5-repo
   enable-parallel-deployments: true

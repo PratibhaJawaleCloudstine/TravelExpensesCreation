@@ -1,0 +1,18 @@
+/* Enter your custom styles here */
+.whiteRoundedBox {
+    background-color: white;
+    border-radius: 6px;
+    padding: 1rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .transparentTable {
+    background-color: transparent !important;
+    border: none !important;
+  }
+  
+  .transparentTable .sapMListTblCell {
+    background-color: transparent !important;
+  }
+  
+  
