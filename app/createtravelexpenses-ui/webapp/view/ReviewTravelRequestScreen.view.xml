@@ -16,11 +16,14 @@
           <Title text="Your Travel Requests" level="H2" class="sapUiSmallMarginBottom sapUiSmallMarginTop" />
 
           <VBox width="80%">
-            <Table id="travelRequestTable" items="{travelData>/travelRequests}">
+            <Table id="travelRequestTable"  inset="false" items="{travelData>/travelRequests}">
               <headerToolbar>
               
               </headerToolbar>
               <columns>
+               <Column  width="5rem">
+                  <Text text="Status" />
+                </Column>
                 <Column>
                   <Text text="Request ID" />
                 </Column>
@@ -38,6 +41,14 @@
               <items>
                 <ColumnListItem>
                   <cells>
+                   <!-- APPROVED STATUS DOT -->
+                    <ObjectStatus
+                      icon="{= ${travelData>Approvedstatus} === 'approved' ? 'sap-icon://accept' : 
+                              ${travelData>Approvedstatus} === 'rejected' ? 'sap-icon://decline' : '' }"
+                      state="{= ${travelData>Approvedstatus} === 'approved' ? 'Success' : 
+                              ${travelData>Approvedstatus} === 'rejected' ? 'Error' : 'None' }"
+                      text=""
+                    />
                     <Text text="{travelData>ID}" />
                     <Text text="{travelData>startDate}" />
                     <Text text="{travelData>endDate}" />

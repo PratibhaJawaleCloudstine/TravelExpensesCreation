@@ -48,7 +48,7 @@ sap.ui.define([
           this.byId("Rev_id_ApproveRadio").setSelected(true);
 
           saveAndProceedButton.setText("Send for Approval");
-          this.selectedOption = "draft";
+          this.selectedOption = "Approve";
         } else{
           this.byId("Rev_id_saveDraftRadio").setEnabled(true);
           this.byId("Rev_id_saveAndApproveRadio").setEnabled(true);
@@ -208,7 +208,44 @@ sap.ui.define([
             });
 
           } else if(this.selectedOption=="Approve"){
-            
+             const oModelTravel = this.getOwnerComponent().getModel("travelData");
+                          console.log("oModelTravel");
+                          console.log(oModelTravel);
+                          const oData = oModelTravel.getData();
+                          console.log("oData");
+                          console.log(oData);
+
+
+                           //start workflow (Build process)
+                            const travelDataObj = {
+                              travelRequest: {
+                                      TravelRequestId: oData.ID,
+                                      TravelStartDate:  oData.startDate,
+                                      TravelEndDate: oData.endDate,
+                                      TravelDeparture: oData.departure,
+                                      TravelArrival:  oData.arrival,
+                                      TravelPlaceOfVisit:  oData.placeOfVisit
+                                  },
+                                  travelExpenses: aExpenses.map(exp => ({
+                                      expenseType: exp.expenseType || "",
+                                      receiptAmount: exp.receiptAmount || "",
+                                      receiptDate: exp.receiptDate || ""
+                                  }))
+                            };
+                          
+                          
+                            $.ajax({
+                              url: "/odata/v4/travel/startTravelWorkflow",
+                              method: "POST",
+                              contentType: "application/json",
+                              data: JSON.stringify({ travelData: JSON.stringify(travelDataObj) }),
+                              success: function (response) {
+                                sap.m.MessageToast.show("Travel request " + oData.ID + " is send for approval.");
+                              },
+                              error: function (xhr, status, error) {
+                                sap.m.MessageBox.error("Failed to start workflow: " + xhr.responseText);
+                              }
+                            });
           }
 
     },

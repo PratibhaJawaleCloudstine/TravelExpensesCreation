@@ -40,12 +40,15 @@ sap.ui.define(["sap/ui/core/mvc/Controller"], (Controller) => {
             const oContext = oEvent.getSource().getBindingContext("travelData");
             const oRowData = oContext.getObject();
 
+            if(oRowData.Approvedstatus == 'approved'){
             this.travelId = oRowData.ID;
             this.getOwnerComponent().getRouter().navTo("CreateTravelExpenseScreen", {
                 travelId: this.travelId
               });
 
-       
+            }else{
+              sap.m.MessageToast.show("This travel request is not approved yet to add travel expenses.");
+            }
           }
           
     });

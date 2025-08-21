@@ -20,7 +20,7 @@ entity TravelRequests {
       advances: String;
       costAssignment: String;
       status: String; //review, draft, approval
-
+      Approvedstatus: String; //Approved, Rejected
         // Add association to TravelExpenses
       expenses    : Composition of many TravelExpenses
                       on expenses.travelRequest = $self;
