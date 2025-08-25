@@ -16,11 +16,14 @@
           <Title text="Your Travel Requests" level="H2" class="sapUiSmallMarginBottom sapUiSmallMarginTop" />
 
           <VBox width="80%">
-            <Table id="travelRequestTable" items="{travelData>/travelRequests}">
+            <Table id="travelRequestTable"  inset="false" items="{travelData>/travelRequests}">
               <headerToolbar>
               
               </headerToolbar>
               <columns>
+               <Column  width="5rem">
+                  <Text text="Status" />
+                </Column>
                 <Column>
                   <Text text="Request ID" />
                 </Column>
@@ -31,17 +34,30 @@
                   <Text text="End Date" />
                 </Column>
                 <Column>
-                  <Text text="Destination" />
+                  <Text text="Estimated Cost" />
+                </Column>
+                <Column>
+                  <Text text="Purpose of Visit" />
                 </Column>
                 <Column width="3rem" />
               </columns>
               <items>
                 <ColumnListItem>
                   <cells>
+                   <!-- APPROVED STATUS DOT -->
+                    <ObjectStatus
+                      icon="{= ${travelData>Approvedstatus} === 'approved' ? 'sap-icon://accept' : 
+                              ${travelData>Approvedstatus} === 'rejected' ? 'sap-icon://decline' : '' }"
+                      state="{= ${travelData>Approvedstatus} === 'approved' ? 'Success' : 
+                              ${travelData>Approvedstatus} === 'rejected' ? 'Error' : 'None' }"
+                      text=""
+                    />
                     <Text text="{travelData>ID}" />
                     <Text text="{travelData>startDate}" />
                     <Text text="{travelData>endDate}" />
-                    <Text text="{travelData>placeOfVisit}" />
+                   
+                    <Text text="{travelData>estimatedCost}" />
+                     <Text text="{travelData>purposeOfTravel}" />
                       <Button 
             icon="sap-icon://navigation-right-arrow" 
             type="Transparent" 

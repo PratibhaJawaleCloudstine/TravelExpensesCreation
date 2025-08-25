@@ -1,11 +1,25 @@
 {
+   "welcomeFile": "/index.html",
+  "authenticationMethod": "route",
   "routes": [
     {
-      "source": "^/(.*)$",
-      "target": "$1",
+      "source": "^/odata/(.*)$",
+      "target": "/odata/$1",
       "destination": "srv-api",
-      "csrfProtection": true
+      "authenticationType": "xsuaa"
+    },
+     {
+      "source": "^(.*)$",
+      "target": "$1",
+      "service": "html5-apps-repo-rt",
+      "authenticationType": "xsuaa"
+    },
+     {
+      "source": "^/createtravelexpensesui/(.*)$",
+      "target": "$1",
+      "destination": "CreateTravelExpenses-html5-service",
+      "csrfProtection": false,
+      "authenticationType": "xsuaa"
     }
-  ],
-  "welcomeFile": "/createtravelexpensescreatetravelexpensesui"
+  ]
 }

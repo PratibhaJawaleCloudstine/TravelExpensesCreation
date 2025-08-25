@@ -1,31 +1,6 @@
-// const cds = require('@sap/cds')
-// const axios = require('axios')
-
-// module.exports = async function (srv) {
-//   srv.on('startTravelWorkflow', async (req) => {
-//     try {
-//       const payload = JSON.parse(req.data.travelData)
-
-//       // Fetch destination + token
-//       const destination = await cds.connect.to('BPA_API_DEST')
-//       const { data } = await destination.send({
-//         method: 'POST',
-//         path: '/workflow/rest/v1/workflow-instances',
-//         data: {
-//           definitionId: "us10.6440fac5trial.travelexpapproval1.travelExpensesProcess",
-//           context: payload
-//         }
-//       })
-
-//       return `Workflow started with ID: ${data.id}`
-//     } catch (err) {
-//       console.error("Workflow trigger error:", err.response?.data || err.message)
-//       return `Error: ${err.message}`
-//     }
-//   })
-// }
-
 const axios = require('axios');
+const cds = require('@sap/cds');
+
 
 module.exports = async function (srv) {
   srv.on('startTravelWorkflow', async (req) => {
@@ -51,6 +26,18 @@ module.exports = async function (srv) {
       console.error("Workflow trigger error:", err.response?.data || err.message);
       return `Error: ${err.message}`;
     }
+  });
+
+   // === Action to get current user info from XSUAA ===
+  srv.on('whoAmI', async (req) => {
+    const user = req.user; // user context from CAP + XSUAA
+    return {
+      id: user.id,
+      email: user.attr?.email,
+      givenName: user.attr?.given_name,
+      familyName: user.attr?.family_name,
+      roles: user.roles
+    };
   });
 };
 

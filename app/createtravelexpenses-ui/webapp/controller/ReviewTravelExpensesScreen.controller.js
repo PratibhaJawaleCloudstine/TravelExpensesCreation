@@ -172,7 +172,13 @@ sap.ui.define([
                                       TravelEndDate: oData.endDate,
                                       TravelDeparture: oData.departure,
                                       TravelArrival:  oData.arrival,
-                                      TravelPlaceOfVisit:  oData.placeOfVisit
+                                      TravelPlaceOfVisit:  oData.placeOfVisit,
+                                       TravelEstimationCost:oData.estimatedCost,
+                                      TravelSelfTravel:oData.selfTravel,
+                                      TravelPurposeOfTravel:oData.purposeOfTravel,
+                                      TravelEmployeeId:"EMP001",
+                                      TravelEmployeeEmail:"pratibhapsarode@gmail.com",
+                                      TravelEmployeeName:"Pratibha Jawale"
                                   },
                                   travelExpenses: aExpenses.map(exp => ({
                                       expenseType: exp.expenseType || "",
@@ -224,7 +230,13 @@ sap.ui.define([
                                       TravelEndDate: oData.endDate,
                                       TravelDeparture: oData.departure,
                                       TravelArrival:  oData.arrival,
-                                      TravelPlaceOfVisit:  oData.placeOfVisit
+                                      TravelPlaceOfVisit:  oData.placeOfVisit,
+                                      TravelEstimationCost:oData.estimatedCost,
+                                      TravelSelfTravel:oData.selfTravel,
+                                      TravelPurposeOfTravel:oData.purposeOfTravel,
+                                      TravelEmployeeId:"EMP001",
+                                      TravelEmployeeEmail:"pratibhapsarode@gmail.com",
+                                      TravelEmployeeName:"Pratibha Jawale"
                                   },
                                   travelExpenses: aExpenses.map(exp => ({
                                       expenseType: exp.expenseType || "",

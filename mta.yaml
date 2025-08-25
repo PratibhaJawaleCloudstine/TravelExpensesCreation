@@ -42,6 +42,7 @@ modules:
           forwardAuthToken: false
           name: ui5
           url: https://ui5.sap.com
+      - name: CreateTravelExpenses-html5-runtime
     provides:
       - name: app-api
         properties:
@@ -102,11 +103,17 @@ resources:
       service: html5-apps-repo
       service-name: CreateTravelExpenses-html5-service
       service-plan: app-host
+  - name: CreateTravelExpenses-html5-runtime  
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: html5-apps-repo
+      service-plan: app-runtime
+
   - name: CreateTravelExpenses-destination-service
     type: org.cloudfoundry.managed-service
     parameters:
       config:
-        HTML5Runtime_enabled: false
+        HTML5Runtime_enabled: true
         init_data:
           instance:
             destinations:
@@ -126,6 +133,14 @@ resources:
                 tokenServiceURL: https://83f357a0trial.authentication.us10.hana.ondemand.com/oauth/token
                 HTML5.DynamicDestination: true
                 WebIDEEnabled: true
+
+              - Name: CreateTravelExpenses-html5-runtime
+                Type: HTTP
+                ProxyType: Internet
+                Authentication: NoAuthentication
+                HTML5.DynamicDestination: true
+                HTML5.ForwardAuthToken: true
+                URL: https://html5-apps-repo-rt.${default-domain}  # auto resolves in CF
             existing_destinations_policy: update
         version: 1.0.0
       service: destination

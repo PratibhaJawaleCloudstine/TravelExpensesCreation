@@ -16,11 +16,13 @@ sap.ui.define(["sap/ui/core/mvc/Controller"], (Controller) => {
             oListBinding.requestContexts().then((aContexts) => {
               // Convert contexts to plain JSON objects
               const aData = aContexts.map(oContext => oContext.getObject());
+
             
               console.log("All TravelRequests:", aData);
             
               const oJSONModel = new sap.ui.model.json.JSONModel({ travelRequests: aData });
               this.getOwnerComponent().setModel(oJSONModel, "travelData");
+
             
             }).catch((oError) => {
               console.error("Failed to fetch TravelRequests:", oError);
@@ -33,8 +35,23 @@ sap.ui.define(["sap/ui/core/mvc/Controller"], (Controller) => {
             } catch (error) {
               
             }
-            
-        
+                  
+             const oModel1 = this.getOwnerComponent().getModel(); // OData V4 Model
+
+              // Note: function import -> must be deferred
+              const oContextBinding = oModel1.bindContext("/whoAmI(...)");  
+
+              oContextBinding.execute().then(() => {
+                  const oContext = oContextBinding.getBoundContext();
+                  const oData = oContext.getObject();
+                  console.log("User Info:", oData);
+
+                  sap.m.MessageToast.show("Hello " + oData.givenName);
+              }).catch(err => {
+                  console.error("Error fetching user:", err);
+              });
+
+              
         },
         onForwardArrowPress: function (oEvent) {
             const oContext = oEvent.getSource().getBindingContext("travelData");

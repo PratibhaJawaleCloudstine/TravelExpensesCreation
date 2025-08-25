@@ -119,7 +119,7 @@
 
         <HBox class="sapUiSmallMarginTop">
           <Button text="Previous Step" press="onPreviousStep" class="sapUiSmallMarginEnd"/>
-          <Button text="Enter Receipts" press="onEnterReceipts" />
+          <Button text="Add Expenses" press="onEnterReceipts" />
         </HBox>
 
 
@@ -127,7 +127,7 @@
 
           <VBox>
             <Toolbar class = "sapUiMediumMarginBottom">
-              <Button text="New Entry" press="onAddNewExpense" />
+              <Button text="Add New Entry" press="onAddNewExpense" />
                <Button text="Delete" press="onDeleteSelectedExpenses" type="Reject" />
             </Toolbar>
 
