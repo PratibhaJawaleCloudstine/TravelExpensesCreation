@@ -8,6 +8,17 @@ sap.ui.define(["sap/ui/core/mvc/Controller"], (Controller) => {
 
         _onRouteMatched: function (oEvent) {
 
+            const oData = {
+              name: "Pratibha Jawale",
+              id: "EMP001"
+            };
+
+            // Create JSON Model
+            const empModel = new sap.ui.model.json.JSONModel(oData);
+
+            // Set model with name 'employeeModel'
+            this.getOwnerComponent().setModel(empModel, "employeeModel");
+
             const oModel = this.getOwnerComponent().getModel(); // OData V4 model
 
             // Bind the list (collection) context
@@ -62,9 +73,10 @@ sap.ui.define(["sap/ui/core/mvc/Controller"], (Controller) => {
             this.getOwnerComponent().getRouter().navTo("CreateTravelExpenseScreen", {
                 travelId: this.travelId
               });
-
-            }else{
-              sap.m.MessageToast.show("This travel request is not approved yet to add travel expenses.");
+            } else if(oRowData.Approvedstatus == 'rejected'){
+              sap.m.MessageToast.show("You cannot add expenses to rejected travel request.");
+            } else {
+              sap.m.MessageToast.show("This travel request is not reviewed yet to add travel expenses.");
             }
           }
           

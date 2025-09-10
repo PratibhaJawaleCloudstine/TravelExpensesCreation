@@ -16,6 +16,10 @@
   }
 
    
+.sapMTextBold {
+    font-weight: bold;
+    font-size: 1.5rem;
+}
 
   .roundedWhiteBox {
     background-color: white !important; /* white background */
@@ -24,6 +28,40 @@
     border: 1px solid #ddd; /* optional subtle border */
     box-shadow: 0px 2px 6px rgba(0,0,0,0.1); /* optional shadow for elevation */
 }
+
+.rowSpacing {
+    margin-bottom: 15px;   /* adds spacing between rows */
+    border-bottom: 1px solid #e0e0e0; /* optional: subtle separator */
+}
+
+.approvedText {
+  color: green;
+  font-weight: bold;
+}
+.rejectedText {
+  color: red;
+  font-weight: bold;
+}
+.notReviewedText {
+  color: gray;
+}
+
+.myDialogContent {
+    padding: 3rem; /* or 16px */
+}
+
+.myDialogContentPadding {
+  padding: 16px; /* Adjust as needed */
+  box-sizing: border-box;
+}
+
+/* Optional: spacing between controls inside the VBox */
+.myDialogContentPadding .sapMFlexItem {
+  margin-bottom: 12px;
+}
+
+
+
 
   
   

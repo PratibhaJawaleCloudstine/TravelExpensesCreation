@@ -1,4 +1,9 @@
-sap.ui.define(["sap/ui/core/mvc/Controller"], (Controller) => {
+sap.ui.define([
+    "sap/ui/core/mvc/Controller",
+    "sap/ui/unified/FileUploader",
+    "sap/m/Dialog",
+    "sap/m/Button"
+], (Controller, FileUploader, Dialog, Button) => {
     "use strict";
 
     return Controller.extend("createtravelexpenses.createtravelexpensesui.controller.CreateTravelExpenseScreen", {
@@ -22,9 +27,9 @@ sap.ui.define(["sap/ui/core/mvc/Controller"], (Controller) => {
 
             const oActionModel = new sap.ui.model.json.JSONModel({
                 actionTaken: ""
-              });
+            });
             this.getOwnerComponent().setModel(oActionModel, "actionModel");
-              
+
 
 
         },
@@ -39,7 +44,9 @@ sap.ui.define(["sap/ui/core/mvc/Controller"], (Controller) => {
             aExpenses.push({
                 expenseType: "",
                 receiptAmount: "",
-                receiptDate: ""
+                receiptDate: "",
+                attachmentCount:"0",
+                attachments: []
             });
 
             oModel.setProperty("/expenses", aExpenses);
@@ -49,7 +56,7 @@ sap.ui.define(["sap/ui/core/mvc/Controller"], (Controller) => {
         onEnterReceipts: function () {
 
             this.byId("idReceiptEntry").setVisible(true);
-         },
+        },
 
         onDeleteSelectedExpenses: function () {
             const oTable = this.byId("expenseTable");
@@ -105,13 +112,15 @@ sap.ui.define(["sap/ui/core/mvc/Controller"], (Controller) => {
 
             const oActionModel = this.getOwnerComponent().getModel("actionModel");
             oActionModel.setProperty("/actionTaken", "review");
-          
+
+            console.log("Review expenses");
+            console.log(aExpenses);
 
             if (aExpenses.length > 0) {
                 this.getOwnerComponent().getRouter().navTo("ReviewTravelExpensesScreen", {
                     travelId: this.travelId
                 });
-            }else{
+            } else {
                 sap.m.MessageToast.show("Please add Travel Expenses.");
             }
         },
@@ -123,7 +132,7 @@ sap.ui.define(["sap/ui/core/mvc/Controller"], (Controller) => {
             const oActionModel = this.getOwnerComponent().getModel("actionModel");
             oActionModel.setProperty("/actionTaken", "save");
 
-            console.log("Review expenses");
+            console.log("Save expenses");
             console.log(aExpenses);
 
             if (aExpenses.length > 0) {
@@ -156,8 +165,8 @@ sap.ui.define(["sap/ui/core/mvc/Controller"], (Controller) => {
                     oModelOData.submitBatch("travelExpensesGroup").then(() => {
                         sap.m.MessageToast.show("Travel Expenses saved successfully.");
                         // Clear the expenses after successful submission
-                       // oModel.setProperty("/expenses", []);
-                            this.getOwnerComponent().getRouter().navTo("ReviewTravelExpensesScreen", {
+                        // oModel.setProperty("/expenses", []);
+                        this.getOwnerComponent().getRouter().navTo("ReviewTravelExpensesScreen", {
                             travelId: this.travelId
                         });
                     }).catch((oError) => {
@@ -174,10 +183,106 @@ sap.ui.define(["sap/ui/core/mvc/Controller"], (Controller) => {
 
         },
 
+      onAttachmentPress: function (oEvent) {
+            var oButton = oEvent.getSource();
+            var oContext = oButton.getBindingContext("expenseModel");
+            this._oSelectedContextPath = oContext.getPath();
+            this._oSelectedExpense = oContext.getObject(); // store selected row data
+            this._oAttachmentBtn = oButton;
+
+
+            // Create dialog if not exists
+            if (!this._oAttachmentDialog) {
+                // VBox with a style class for padding
+                var oVBox = new sap.m.VBox({
+                    items: [
+                        new sap.ui.unified.FileUploader("fileUploader", {
+                            width: "100%",
+                            sameFilenameAllowed: true,
+                            change: this.onFileSelected.bind(this)
+                        }),
+                        new sap.m.List("attachmentList", {
+                            items: {
+                                path: "expenseModel>attachments",
+                                template: new sap.m.StandardListItem({
+                                    title: "{expenseModel>name}",
+                                    description: "{expenseModel>type}"
+                                })
+                            }
+                        })
+                    ]
+                }).addStyleClass("myDialogContentPadding"); 
+
+                this._oAttachmentDialog = new sap.m.Dialog({
+                    title: "Upload Attachment",
+                    contentWidth: "400px",
+                    content: [oVBox],
+                    beginButton: new sap.m.Button({
+                        text: "Done",
+                        press: function () {
+                             // get the button by id
+
+                            // get count of attachments for the selected expense row
+                            var iCount = (this._oSelectedExpense.attachments || []).length;
+                            console.log("iCount-------------");
+                            console.log(iCount);
+
+                            // set button text with count
+                            // Update only the clicked row's button
+                            this._oAttachmentBtn.setText(iCount + (iCount === 1 ? " Attachment" : " Attachments"));
+
+                            // Update model at the correct path
+                            var oModel = this.getOwnerComponent().getModel("expenseModel");
+                            oModel.setProperty(this._oSelectedContextPath + "/attachmentCount", iCount);
+
+                            this._oAttachmentBtn.rerender(); 
+
+                            
+                            this._oAttachmentDialog.close();
+                        }.bind(this)
+                    })
+                });
+                this.getView().addDependent(this._oAttachmentDialog);
+            }
+
+            // Bind list to selected row's attachments
+            var oAttachmentList = sap.ui.getCore().byId("attachmentList");
+            oAttachmentList.setBindingContext(oContext, "expenseModel");
+
+            this._oAttachmentDialog.open();
+        },
+
+
+        onFileSelected: function (oEvent) {
+            var oFileUploader = oEvent.getSource();
+            var oFile = oEvent.getParameter("files")[0];
+
+            if (!oFile || !this._oSelectedExpense) {
+                return;
+            }
+
+            if (!this._oSelectedExpense.attachments) {
+                this._oSelectedExpense.attachments = [];
+            }
+
+            this._oSelectedExpense.attachments.push({
+                name: oFile.name,
+                type: oFile.type,
+                size: oFile.size
+            });
+ 
+
+            // Refresh the model so list updates
+            this.getOwnerComponent().getModel("expenseModel").refresh(true);
+
+            // 🔑 Reset file input so old file name doesn't stay
+            oFileUploader.clear();
+        },
+
 
         _onRouteMatched: function (oEvent) {
 
-          
+
 
             this.travelId = oEvent.getParameter("arguments").travelId;
             const oModel = this.getOwnerComponent().getModel(); // OData V4 model
@@ -202,7 +307,7 @@ sap.ui.define(["sap/ui/core/mvc/Controller"], (Controller) => {
                 this.byId("idReceiptEntry").setVisible(true);
                 this.byId("expenseTable").setVisible(true);
 
-            }else{
+            } else {
                 this.byId("idReceiptEntry").setVisible(false);
                 this.byId("expenseTable").setVisible(false);
 

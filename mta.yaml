@@ -77,6 +77,9 @@ modules:
         - npm run build:cf
       supported-platforms:
         []
+    requires:
+      - name: CreateTravelExpenses-auth   # XSUAA service instance
+      - name: CreateTravelExpenses-repo-host     # <-- required for HTML5 Applications
 resources:
   - name: CreateTravelExpenses-auth
     type: org.cloudfoundry.managed-service
