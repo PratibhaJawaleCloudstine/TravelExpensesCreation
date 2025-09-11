@@ -109,6 +109,7 @@ sap.ui.define([
                     receiptAmount: item.receiptAmount,
                     receiptDate: item.receiptDate,
                     currency: "INR"
+                    
                 });
 
 
@@ -144,7 +145,13 @@ sap.ui.define([
                     expenseType: item.expenseType,
                     receiptAmount: item.receiptAmount,
                     receiptDate: item.receiptDate,
-                    currency: "INR"
+                    currency: "INR",
+                    attachmentCount: item.attachmentCount || 0,
+                    attachments: (item.attachments || []).map(att => ({
+                       name: att.name,
+                       type: att.type,
+                       size: att.size
+                    }))
                 });
 
                 count = count + 1;
@@ -183,11 +190,17 @@ sap.ui.define([
                                   travelExpenses: aExpenses.map(exp => ({
                                       expenseType: exp.expenseType || "",
                                       receiptAmount: exp.receiptAmount || "",
-                                      receiptDate: exp.receiptDate || ""
+                                      receiptDate: exp.receiptDate || "",
+                                      attachmentCount: exp.attachmentCount || 0,
+                                      attachments: (exp.attachments || []).map(att => ({
+                                        name: att.name,
+                                        type: att.type,
+                                        size: att.size,
+                                      }))
                                   }))
                             };
                           
-                          
+                          console.log(travelDataObj);
                             $.ajax({
                               url: "/odata/v4/travel/startTravelWorkflow",
                               method: "POST",
@@ -241,10 +254,16 @@ sap.ui.define([
                                   travelExpenses: aExpenses.map(exp => ({
                                       expenseType: exp.expenseType || "",
                                       receiptAmount: exp.receiptAmount || "",
-                                      receiptDate: exp.receiptDate || ""
+                                      receiptDate: exp.receiptDate || "",
+                                      attachmentCount: exp.attachmentCount || 0,
+                                      attachments: (exp.attachments || []).map(att => ({
+                                        name: att.name,
+                                        type: att.type,
+                                        size: att.size,
+                                      }))
                                   }))
                             };
-                          
+                          console.log(travelDataObj);
                           
                             $.ajax({
                               url: "/odata/v4/travel/startTravelWorkflow",

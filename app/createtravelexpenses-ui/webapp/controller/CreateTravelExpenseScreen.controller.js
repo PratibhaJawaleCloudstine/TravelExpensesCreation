@@ -45,7 +45,7 @@ sap.ui.define([
                 expenseType: "",
                 receiptAmount: "",
                 receiptDate: "",
-                attachmentCount:"0",
+                attachmentCount: "0",
                 attachments: []
             });
 
@@ -125,6 +125,9 @@ sap.ui.define([
             }
         },
 
+  
+
+
         onSaveDraft: function () {
             const oModel = this.getOwnerComponent().getModel("expenseModel");
             const aExpenses = oModel.getProperty("/expenses") || [];
@@ -156,7 +159,8 @@ sap.ui.define([
                         expenseType: item.expenseType,
                         receiptAmount: item.receiptAmount,
                         receiptDate: item.receiptDate,
-                        currency: "INR"
+                        currency: "INR",
+                        attachments: item.attachments || []
                     });
 
 
@@ -183,7 +187,7 @@ sap.ui.define([
 
         },
 
-      onAttachmentPress: function (oEvent) {
+        onAttachmentPress: function (oEvent) {
             var oButton = oEvent.getSource();
             var oContext = oButton.getBindingContext("expenseModel");
             this._oSelectedContextPath = oContext.getPath();
@@ -211,7 +215,7 @@ sap.ui.define([
                             }
                         })
                     ]
-                }).addStyleClass("myDialogContentPadding"); 
+                }).addStyleClass("myDialogContentPadding");
 
                 this._oAttachmentDialog = new sap.m.Dialog({
                     title: "Upload Attachment",
@@ -220,7 +224,7 @@ sap.ui.define([
                     beginButton: new sap.m.Button({
                         text: "Done",
                         press: function () {
-                             // get the button by id
+                            // get the button by id
 
                             // get count of attachments for the selected expense row
                             var iCount = (this._oSelectedExpense.attachments || []).length;
@@ -235,9 +239,9 @@ sap.ui.define([
                             var oModel = this.getOwnerComponent().getModel("expenseModel");
                             oModel.setProperty(this._oSelectedContextPath + "/attachmentCount", iCount);
 
-                            this._oAttachmentBtn.rerender(); 
+                            this._oAttachmentBtn.rerender();
 
-                            
+
                             this._oAttachmentDialog.close();
                         }.bind(this)
                     })
@@ -252,7 +256,6 @@ sap.ui.define([
             this._oAttachmentDialog.open();
         },
 
-
         onFileSelected: function (oEvent) {
             var oFileUploader = oEvent.getSource();
             var oFile = oEvent.getParameter("files")[0];
@@ -261,23 +264,57 @@ sap.ui.define([
                 return;
             }
 
-            if (!this._oSelectedExpense.attachments) {
-                this._oSelectedExpense.attachments = [];
-            }
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                var sBase64 = e.target.result.split(",")[1]; // actual base64 content
 
-            this._oSelectedExpense.attachments.push({
-                name: oFile.name,
-                type: oFile.type,
-                size: oFile.size
-            });
- 
+                if (!this._oSelectedExpense.attachments) {
+                    this._oSelectedExpense.attachments = [];
+                }
 
-            // Refresh the model so list updates
-            this.getOwnerComponent().getModel("expenseModel").refresh(true);
+                this._oSelectedExpense.attachments.push({
+                    name: oFile.name,
+                    type: oFile.type,
+                    size: oFile.size,
+                    content: sBase64   //  add file content here
+                });
 
-            // 🔑 Reset file input so old file name doesn't stay
-            oFileUploader.clear();
+                // Refresh the model so list updates
+                this.getOwnerComponent().getModel("expenseModel").refresh(true);
+
+                // Clear file uploader
+                oFileUploader.clear();
+            }.bind(this);
+
+            reader.readAsDataURL(oFile); //  reads file as base64
         },
+
+        // onFileSelected: function (oEvent) {
+        //     var oFileUploader = oEvent.getSource();
+        //     var oFile = oEvent.getParameter("files")[0];
+
+        //     if (!oFile || !this._oSelectedExpense) {
+        //         return;
+        //     }
+
+        //     if (!this._oSelectedExpense.attachments) {
+        //         this._oSelectedExpense.attachments = [];
+        //     }
+
+        //     this._oSelectedExpense.attachments.push({
+        //         name: oFile.name,
+        //         type: oFile.type,
+        //         size: oFile.size,
+        //         content: sBase64 
+        //     });
+
+
+        //     // Refresh the model so list updates
+        //     this.getOwnerComponent().getModel("expenseModel").refresh(true);
+
+        //     // 🔑 Reset file input so old file name doesn't stay
+        //     oFileUploader.clear();
+        // },
 
 
         _onRouteMatched: function (oEvent) {

@@ -78,8 +78,8 @@ modules:
       supported-platforms:
         []
     requires:
-      - name: CreateTravelExpenses-auth   # XSUAA service instance
-      - name: CreateTravelExpenses-repo-host     # <-- required for HTML5 Applications
+      - name: CreateTravelExpenses-auth # XSUAA service instance
+      - name: CreateTravelExpenses-repo-host # <-- required for HTML5 Applications
 resources:
   - name: CreateTravelExpenses-auth
     type: org.cloudfoundry.managed-service
@@ -106,7 +106,7 @@ resources:
       service: html5-apps-repo
       service-name: CreateTravelExpenses-html5-service
       service-plan: app-host
-  - name: CreateTravelExpenses-html5-runtime  
+  - name: CreateTravelExpenses-html5-runtime
     type: org.cloudfoundry.managed-service
     parameters:
       service: html5-apps-repo
@@ -143,7 +143,7 @@ resources:
                 Authentication: NoAuthentication
                 HTML5.DynamicDestination: true
                 HTML5.ForwardAuthToken: true
-                URL: https://html5-apps-repo-rt.${default-domain}  # auto resolves in CF
+                URL: https://html5-apps-repo-rt.${default-domain} # auto resolves in CF
             existing_destinations_policy: update
         version: 1.0.0
       service: destination

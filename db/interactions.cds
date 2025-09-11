@@ -33,4 +33,18 @@ entity TravelExpenses {
       receiptAmount : Decimal(10,2);
       receiptDate   : Date;
       currency      : String;
+       attachmentCount: Integer;
+
+      // Composition for storing file metadata
+      attachments    : Composition of many TravelAttachments
+                         on attachments.travelExpense = $self;
+}
+
+
+entity TravelAttachments {
+  key ID            : UUID;
+      travelExpense  : Association to TravelExpenses;
+      name           : String;   // File name
+      type           : String;   // MIME type
+      size           : Integer;  // File size in bytes
 }
