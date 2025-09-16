@@ -276,7 +276,6 @@ sap.ui.define([
                     name: oFile.name,
                     type: oFile.type,
                     size: oFile.size,
-                    content: sBase64   //  add file content here
                 });
 
                 // Refresh the model so list updates
