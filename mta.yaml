@@ -62,9 +62,9 @@ modules:
     build-parameters:
       build-result: resources
       requires:
-        - artifacts:
-            - createtravelexpensescreatetravelexpensesui.zip
-          name: createtravelexpensescreatetravelexpensesui
+        - name: createtravelexpensescreatetravelexpensesui
+          artifacts:
+            - createtravelexpensescreatetravelexpensesui.zip          
           target-path: resources/
   - name: createtravelexpensescreatetravelexpensesui
     type: html5
@@ -137,13 +137,15 @@ resources:
                 HTML5.DynamicDestination: true
                 WebIDEEnabled: true
 
-              - Name: CreateTravelExpenses-html5-runtime
-                Type: HTTP
-                ProxyType: Internet
+              - Name: createtravelexpensescreatetravelexpensesui
+                ServiceInstanceName: CreateTravelExpenses-html5-service
+                ServiceKeyName: CreateTravelExpenses-app-key
                 Authentication: NoAuthentication
+                ProxyType: Internet
                 HTML5.DynamicDestination: true
-                HTML5.ForwardAuthToken: true
-                URL: https://html5-apps-repo-rt.${default-domain} # auto resolves in CF
+
+
+              
             existing_destinations_policy: update
         version: 1.0.0
       service: destination

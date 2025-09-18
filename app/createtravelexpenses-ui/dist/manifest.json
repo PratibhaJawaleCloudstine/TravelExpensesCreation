@@ -31,6 +31,9 @@
       }
     }
   },
+  "sap.cloud": {
+    "service": "createtravelexpenses.createtravelexpensesui"
+  },
   "sap.ui": {
     "technology": "UI5",
     "icons": {
