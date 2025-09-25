@@ -32,7 +32,7 @@ sap.ui.define(["sap/ui/core/mvc/Controller"], (Controller) => {
               console.log("All TravelRequests:", aData);
             
               const oJSONModel = new sap.ui.model.json.JSONModel({ travelRequests: aData });
-              this.getOwnerComponent().setModel(oJSONModel, "travelData");
+              this.getOwnerComponent().setModel(oJSONModel, "AlltravelData");
 
             
             }).catch((oError) => {
@@ -65,20 +65,64 @@ sap.ui.define(["sap/ui/core/mvc/Controller"], (Controller) => {
               
         },
         onForwardArrowPress: function (oEvent) {
-            const oContext = oEvent.getSource().getBindingContext("travelData");
+            const oContext = oEvent.getSource().getBindingContext("AlltravelData");
             const oRowData = oContext.getObject();
+            
 
-            if(oRowData.Approvedstatus == 'approved'){
+            if(oRowData.Approvedstatus == 'Approved'){
+                // 2. Store this in a separate JSONModel
+    const oJSONModel = new sap.ui.model.json.JSONModel(oRowData);
+console.log("Particular travel details .............");
+    console.log(oJSONModel);
+
+    // You can set it on component (global use) OR view (local use)
+    this.getOwnerComponent().setModel(oJSONModel, "travelData");
+
+
             this.travelId = oRowData.ID;
+            console.log("Travel ID ------------");
+            console.log(this.travelId);
             this.getOwnerComponent().getRouter().navTo("CreateTravelExpenseScreen", {
                 travelId: this.travelId
               });
-            } else if(oRowData.Approvedstatus == 'rejected'){
+            } else if(oRowData.Approvedstatus == 'Rejected'){
               sap.m.MessageToast.show("You cannot add expenses to rejected travel request.");
             } else {
               sap.m.MessageToast.show("This travel request is not reviewed yet to add travel expenses.");
             }
-          }
+          },
+
+          
+    formatStatusText: function (sValue) {
+      if (!sValue) {
+        return "Draft";   // show default text
+      }
+      const lower = sValue.toLowerCase();
+
+      if (lower === "awaiting approval") {
+        return "Awaiting Approval";
+      }
+
+
+      return lower.charAt(0).toUpperCase() + lower.slice(1);
+    },
+
+    formatStatusState: function (sValue) {
+      if (!sValue) {
+        return "Warning";
+      }
+      sValue = sValue.toLowerCase();
+      console.log(sValue);
+      if (sValue === "approved") {
+        return "Success"; // Green
+      } else if (sValue === "rejected") {
+        return "Error";   // Red
+      } else if (sValue === "awaiting approval") {
+        return "Information"; // Blue
+      }
+      return "None"; // fallback
+    },
+
           
     });
 });

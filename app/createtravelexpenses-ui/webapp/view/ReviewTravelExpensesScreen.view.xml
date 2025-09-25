@@ -160,7 +160,7 @@
                                     <Label text="Additional Travellers:" />
                                     <Text
                                         id="id_additionalTravellers"
-                                        text="{travelData>/additionalTravellers}"
+                                        text="{= ${travelData>/additionalTravellers} ? ${travelData>/additionalTravellers} : '-' }"
                                         class="sapUiSmallMarginBegin"
                                     />
                                 </HBox>
@@ -168,9 +168,14 @@
                                     <Label
                                         text="Advance (International Trip):"
                                     />
-                                    <Text
+                                     <Text
                                         id="id_advance"
-                                        text="{travelData>/advance} Indian Rupee"
+                                        text="{= ${travelData>/advance} ? ${travelData>/advance} : '0.00' }"
+                                        class="sapUiSmallMarginBegin"
+                                    />
+                                     <Text
+                                        id="id_advance_unit"
+                                        text=" Indian Rupee"
                                         class="sapUiSmallMarginBegin"
                                     />
                                 </HBox>

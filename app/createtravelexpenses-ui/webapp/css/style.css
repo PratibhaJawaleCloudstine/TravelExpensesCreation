@@ -60,6 +60,26 @@
   margin-bottom: 12px;
 }
 
+/* Remove header and outer borders */
+.borderlessTable .sapMListTbl,
+.borderlessTable .sapMListTbl th,
+.borderlessTable .sapMListTbl td {
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.bullet {
+  width: 1rem;
+}
+.borderlessList .sapMListTbl,
+.borderlessList .sapMListTbl th,
+.borderlessList .sapMListTbl td {
+  border: none !important;
+}
+
+.attachmentType {
+  color: gray;
+}
 
 
 

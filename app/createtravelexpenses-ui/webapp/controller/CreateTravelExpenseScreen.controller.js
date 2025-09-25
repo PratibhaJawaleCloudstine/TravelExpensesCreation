@@ -53,6 +53,33 @@ sap.ui.define([
             console.log(aExpenses);
         },
 
+        onAmountChange: function (oEvent) {
+            // 1. Get entered value
+            let sValue = oEvent.getParameter("value");
+            let fValue = parseFloat(sValue) || 0; // ensure numeric
+
+            console.log("fValue " + fValue);
+
+            const oModel = this.getOwnerComponent().getModel("expenseModel");
+            const aExpenses = oModel.getProperty("/expenses") || [];
+
+            console.log("aExpenses ----------------------------------");
+            console.log(aExpenses);
+
+            this.totalExpenses = 0;
+
+            aExpenses.forEach((item) => {
+                this.totalExpenses = this.totalExpenses + parseInt(item.receiptAmount ? item.receiptAmount : 0.00, 10);
+            });
+
+
+
+            this.byId("id_expense_total").setText("₹ " + this.totalExpenses);
+            this.displayTotalAmount();
+            console.log("****** 79 **********");
+        },
+
+
         onEnterReceipts: function () {
 
             this.byId("idReceiptEntry").setVisible(true);
@@ -115,6 +142,7 @@ sap.ui.define([
 
             console.log("Review expenses");
             console.log(aExpenses);
+            console.log(this.travelId);
 
             if (aExpenses.length > 0) {
                 this.getOwnerComponent().getRouter().navTo("ReviewTravelExpensesScreen", {
@@ -125,7 +153,7 @@ sap.ui.define([
             }
         },
 
-  
+
 
 
         onSaveDraft: function () {
@@ -288,54 +316,103 @@ sap.ui.define([
             reader.readAsDataURL(oFile); //  reads file as base64
         },
 
-        // onFileSelected: function (oEvent) {
-        //     var oFileUploader = oEvent.getSource();
-        //     var oFile = oEvent.getParameter("files")[0];
-
-        //     if (!oFile || !this._oSelectedExpense) {
-        //         return;
-        //     }
-
-        //     if (!this._oSelectedExpense.attachments) {
-        //         this._oSelectedExpense.attachments = [];
-        //     }
-
-        //     this._oSelectedExpense.attachments.push({
-        //         name: oFile.name,
-        //         type: oFile.type,
-        //         size: oFile.size,
-        //         content: sBase64 
-        //     });
-
-
-        //     // Refresh the model so list updates
-        //     this.getOwnerComponent().getModel("expenseModel").refresh(true);
-
-        //     // 🔑 Reset file input so old file name doesn't stay
-        //     oFileUploader.clear();
-        // },
 
 
         _onRouteMatched: function (oEvent) {
 
 
 
+            var sTravelId = oEvent.getParameter("arguments").travelId;
             this.travelId = oEvent.getParameter("arguments").travelId;
             const oModel = this.getOwnerComponent().getModel(); // OData V4 model
-            const oContextBinding = oModel.bindContext(`/TravelRequests(${this.travelId})`);
+            console.log("Travel ID in create------------");
+            console.log(this.travelId);
 
-            oContextBinding.requestObject().then((oData) => {
-                console.log("Single travel request data:", oData);
 
-                const oJSONModel = new sap.ui.model.json.JSONModel(oData);
-                this.getOwnerComponent().setModel(oJSONModel, "travelData");
-                console.log(oJSONModel);
+
+            // Step 1: Bind list of expenses for the given travel request
+            const oExpenseBinding = oModel.bindList(`/TravelRequests(${sTravelId})/expenses`);
+
+            oExpenseBinding.requestContexts().then(async (aExpenseContexts) => {
+                const aExpenses = [];
+                console.log("****** aExpenses.length " + aExpenseContexts.length);
+                if(aExpenseContexts.length >0){
+                    this.byId("id_totalBlock").setVisible(true);
+                }else{
+                    this.byId("id_totalBlock").setVisible(false);
+                }
+                // Step 2: Loop through each expense
+                for (const oCtx of aExpenseContexts) {
+                    const oExpense = oCtx.getObject();
+                    this.totalExpenses = this.totalExpenses + parseInt(oExpense.receiptAmount, 10);
+
+                    // Initialize your structure
+                    const oExpenseData = {
+                        expenseType: oExpense.expenseType,
+                        receiptAmount: oExpense.receiptAmount,
+                        receiptDate: oExpense.receiptDate,
+                        attachmentCount: oExpense.attachmentCount || 0,
+                        attachments: []
+                    };
+
+                    // Step 3: Fetch attachments of this expense
+                    const sExpenseId = oExpense.ID;
+                    const oAttachmentBinding = oModel.bindList(
+                        `/TravelRequests(${sTravelId})/expenses(${sExpenseId})/attachments`
+                    );
+
+                    try {
+                        const aAttachmentContexts = await oAttachmentBinding.requestContexts();
+                        oExpenseData.attachments = aAttachmentContexts.map(ctx => ctx.getObject());
+                    } catch (err) {
+                        console.error(`Error fetching attachments for expense ${sExpenseId}:`, err);
+                    }
+
+                    // Push into final array
+                    aExpenses.push(oExpenseData);
+                }
+
+                // Step 4: Store into expenseModel
+                const oExpenseModel = new sap.ui.model.json.JSONModel({ expenses: aExpenses });
+                this.getView().setModel(oExpenseModel, "expenseModelReview");
+
+                console.log("Final expenses with attachments:", aExpenses);
+
+                if (aExpenses.length > 0) {
+                    this.displayTotalAmount();
+                    console.log("****** 387 **********");
+
+                    this.byId("id_addExpenses").setVisible(false);
+                    this.byId("id_expensesText").setVisible(true);
+                    this.byId("id_expReview").setVisible(true);
+                    this.byId("id_buttons").setVisible(false);
+                } else {
+                    this.byId("id_addExpenses").setVisible(true);
+                    this.byId("id_expensesText").setVisible(false);
+                    this.byId("id_expReview").setVisible(false);
+                    this.byId("id_buttons").setVisible(true);
+                }
+
+
+
+
 
             }).catch((oError) => {
-                console.error("Failed to fetch specific travel request:", oError);
-                sap.m.MessageBox.error("Error fetching data.");
+                console.error("Failed to fetch expenses:", oError);
+                sap.m.MessageBox.error("Error fetching travel expenses.");
             });
 
+
+            const travelData = this.getOwnerComponent().getModel("travelData");
+            var advance = travelData.advance ? travelData.advance : "0.00"
+            this.byId("id_expense_advance").setText("-  ₹ " + advance);
+
+            this.totalExpenses = 0.00;
+            this.byId("id_expense_total").setText("₹ " + this.totalExpenses);
+            if (this.totalExpenses = 0.00 > 0) {
+                this.displayTotalAmount();
+                console.log("****** 405 **********");
+            }
             const oModel1 = this.getOwnerComponent().getModel("expenseModel");
             const aExpenses = oModel1.getProperty("/expenses") || [];
 
@@ -343,9 +420,11 @@ sap.ui.define([
                 this.byId("idReceiptEntry").setVisible(true);
                 this.byId("expenseTable").setVisible(true);
 
+
             } else {
                 this.byId("idReceiptEntry").setVisible(false);
                 this.byId("expenseTable").setVisible(false);
+
 
             }
         },
@@ -357,6 +436,17 @@ sap.ui.define([
             this.getOwnerComponent().getRouter().navTo("CreateTravelExpenseScreen", {
                 travelId: travelId
             });
+
+
+        },
+        displayTotalAmount: function () {
+            this.byId("id_totalBlock").setVisible(true);
+            this.byId("id_expense_total").setText("₹ " + this.totalExpenses);
+
+            const travelData = this.getOwnerComponent().getModel("travelData");
+            var advance = travelData.advance ? travelData.advance : "0.00";
+            var totalExp = this.totalExpenses - parseInt(advance, 10);
+            this.byId("id_expense_total_exp").setText("₹ " + totalExp);
 
 
         }

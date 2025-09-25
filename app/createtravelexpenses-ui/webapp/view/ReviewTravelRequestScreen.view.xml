@@ -64,7 +64,7 @@
                         <Table
                             id="travelRequestTable"
                             inset="false"
-                            items="{travelData>/travelRequests}"
+                            items="{AlltravelData>/travelRequests}"
                         >
                             <headerToolbar />
                             <columns>
@@ -93,22 +93,26 @@
                                 <ColumnListItem>
                                     <cells>
                                       
-                                        <Text text="{travelData>ID}" />
-                                        <Text text="{travelData>startDate}" />
-                                        <Text text="{travelData>endDate}" />
+                                        <Text text="{AlltravelData>ID}" />
+                                        <Text text="{AlltravelData>startDate}" />
+                                        <Text text="{AlltravelData>endDate}" />
 
                                         <Text
-                                            text="{travelData>estimatedCost}"
+                                            text="{AlltravelData>estimatedCost}"
                                         />
                                         <Text
-                                            text="{travelData>purposeOfTravel}"
+                                            text="{AlltravelData>purposeOfTravel}"
                                         />
-<Text
-    text="{= ${travelData>Approvedstatus} === 'approved' ? 'Approved' :
-                 ${travelData>Approvedstatus} === 'rejected' ? 'Rejected' : 'Not reviewed'}"
-    class="{= ${travelData>Approvedstatus} === 'approved' ? 'approvedText' :
-                  ${travelData>Approvedstatus} === 'rejected' ? 'rejectedText' : 'notReviewedText'}"
-/>
+<ObjectStatus
+                                                            text="{
+                                                                path: 'AlltravelData>Approvedstatus',
+                                                                formatter: '.formatStatusText'
+                                                            }"
+                                                            state="{
+                                                                path: 'AlltravelData>Approvedstatus',
+                                                                formatter: '.formatStatusState'
+                                                            }"
+                                                        />
 
 
                                        
